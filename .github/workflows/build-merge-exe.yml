@@ -1,0 +1,35 @@
+name: build-merge-exe
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller --noconfirm --clean --onefile --windowed ^
+            --name "MergeTool_v3.3.12" ^
+            "结论性文书合并移动工具V3.3.12.py"
+        shell: cmd
+
+      - name: Upload artifact (.exe)
+        uses: actions/upload-artifact@v4
+        with:
+          name: MergeTool_v3.3.12.exe
+          path: dist/MergeTool_v3.3.12.exe
